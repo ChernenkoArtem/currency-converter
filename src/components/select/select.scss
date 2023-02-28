@@ -11,16 +11,15 @@
     border-radius: 6px;
     border: 1px solid #666666;
     color: #f5f6fa;
-    min-height: 40px;
+    // min-height: 40px;
 
-    padding-top: 12px;
-    padding-left: 1em;
+    padding: 0 0.5em 0;
     cursor: pointer;
     user-select: none;
   }
 
   .selected.open {
-    border: 1px solid #ad8225;
+    border: 1px solid #8ab4f8;
     border-radius: 6px 6px 0px 0px;
   }
 
@@ -36,16 +35,16 @@
   }
 
   .items {
-    color: #fff;
+    color: #bdc1c6;
     border-radius: 0px 0px 6px 6px;
     overflow: hidden;
-    border-right: 1px solid #ad8225;
-    border-left: 1px solid #ad8225;
-    border-bottom: 1px solid #ad8225;
+    border-right: 1px solid #8ab4f8;
+    border-left: 1px solid #8ab4f8;
+    border-bottom: 1px solid #8ab4f8;
     position: absolute;
     background-color: #2f3640;
     max-height: 300px;
-    overflow: scroll;
+    overflow-y: scroll;
     left: 0;
     right: 0;
     z-index: 1;
@@ -55,16 +54,19 @@
       background: #0d141f;
       border-radius: 0 8px 8px 0;
     }
+    &::-webkit-scrollbar-thumb {
+      background: #5c5b5b;
+    }
 
     .option {
-      color: #fff;
+      color: #bdc1c6;
       padding-left: 1em;
       cursor: pointer;
       user-select: none;
     }
 
     .option:hover {
-      background-color: #ad8225;
+      background-color: #656769;
     }
   }
 

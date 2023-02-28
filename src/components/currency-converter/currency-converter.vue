@@ -31,7 +31,7 @@ export default class CurrencyConverter extends Vue {
       value: '',
       currency: '',
     },
-    exchangeRate: 0,
+    exchangeRate: 1,
   };
 
   selectHandler(value: string, key: string) {
@@ -48,7 +48,7 @@ export default class CurrencyConverter extends Vue {
   convert(key: string) {
     const [, , , toKey] = this.getconverterDataValue(key);
     const fromValue = (this.converterData[key as keyof IConverter] as ConverterData).value;
-    let toValue = 0;
+    let toValue = 1;
     if (key === 'to') {
       toValue = +fromValue * this.converterData.exchangeRate;
     } else if (key === 'from') {
@@ -71,17 +71,13 @@ export default class CurrencyConverter extends Vue {
 
   setCurrencyRateByOne(key: string) {
     const [from, to] = this.getconverterDataValue(key);
-
     if (!from || !to) return;
-
     currencyService
       .getCurrencyCompare(from as string, [to as string])
       .then((res) => res.text())
       .then((v) => {
         const value = JSON.parse(v);
-
         this.converterData.exchangeRate = +hetoFixedlpFunc(value.rates[to]);
-
         this.convert(key);
       });
   }
@@ -89,31 +85,40 @@ export default class CurrencyConverter extends Vue {
 </script>
 
 <template>
-  <label for="from_input">
-    <input
-      id="from_input"
-      type="text"
-      @input="onChangeDebounced($event, 'from')"
-      :value="converterData.from.value"
-    />
-  </label>
-  <ISelect
-    :options-list="commonCurrencySeries"
-    default-value="USD"
-    @selected-value="selectHandler($event, 'from')"
-  />
-  <br />
-  <label for="to_input">
-    <input
-      id="to_input"
-      type="text"
-      @input="onChangeDebounced($event, 'to')"
-      :value="converterData.to.value"
-    />
-  </label>
-  <ISelect
-    :options-list="commonCurrencySeries"
-    default-value="BTC"
-    @selected-value="selectHandler($event, 'to')"
-  />
+  <div class="converter">
+    <div class="converter__item">
+      <label for="from_input">
+        <input
+          id="from_input"
+          type="text"
+          @input="onChangeDebounced($event, 'from')"
+          :value="converterData.from.value"
+        />
+      </label>
+      <ISelect
+        :options-list="commonCurrencySeries"
+        default-value="USD"
+        @selected-value="selectHandler($event, 'from')"
+      />
+    </div>
+
+    <span class="double-arrows">&#8644;</span>
+
+    <div class="converter__item">
+      <label for="to_input">
+        <input
+          id="to_input"
+          type="text"
+          @input="onChangeDebounced($event, 'to')"
+          :value="converterData.to.value"
+        />
+      </label>
+      <ISelect
+        :options-list="commonCurrencySeries"
+        default-value="BTC"
+        @selected-value="selectHandler($event, 'to')"
+      />
+    </div>
+  </div>
 </template>
+<style src="./currency-converter.scss" lang="scss"></style>

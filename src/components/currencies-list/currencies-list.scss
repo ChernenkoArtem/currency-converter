@@ -1,0 +1,13 @@
+.compare-wrapper {
+  margin-top: 50px;
+
+  .currencies {
+    margin-bottom: 30px;
+  }
+}
+
+@media all and (max-width: 1200px) and (orientation: portrait) {
+  .compare-wrapper {
+    margin-top: 30px;
+  }
+}

@@ -90,26 +90,27 @@ export default class CurrenciesCompareList extends Vue {
 </script>
 
 <template>
-  <div class="currencies">
-    <ISelect
-      :options-list="selectCurrenciesList"
-      default-value="USD"
-      @selected-value="selectedHandler"
-    />
+  <div class="compare-wrapper">
+    <div class="currencies">
+      <ISelect
+        :options-list="selectCurrenciesList"
+        default-value="USD"
+        @selected-value="selectedHandler"
+      />
 
-    <div class="currencies__compare compare">
-      <div
-        v-for="[name, value] in compareCurrenciesRates"
-        v-bind:key="name"
-        class="compare__item item"
-      >
-        <div class="item__name">{{ name }}</div>
-        <div class="item__value">{{ value }}</div>
+      <div class="currencies__compare compare">
+        <div
+          v-for="[name, value] in compareCurrenciesRates"
+          v-bind:key="name"
+          class="compare__item item"
+        >
+          <div class="item__name">{{ name }}</div>
+          <div class="item__value">{{ value }}</div>
+        </div>
       </div>
     </div>
+    <button class="btn-common" @click="openPopup">OPEN POPUP</button>
   </div>
-
-  <button @click="openPopup">Open popup</button>
 
   <Popup :is-open="isPopupOpen" @close="closePopup">
     <template #content>
@@ -122,7 +123,9 @@ export default class CurrenciesCompareList extends Vue {
       </ISelect>
     </template>
     <template #actions>
-      <button @click="addCurrency">Add currency</button>
+      <button class="btn-common" @click="addCurrency">Add currency</button>
     </template>
   </Popup>
 </template>
+
+<style src="./currencies-list.scss" lang="scss"></style>

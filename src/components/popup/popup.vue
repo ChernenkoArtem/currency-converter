@@ -25,13 +25,15 @@ export default class Popup extends Vue {
 <template>
   <div v-if="isOpen" class="backdrop" @click="close" @keydown="handleKeydown">
     <div class="popup" @click.stop>
-      <slot></slot>
-      <hr />
-      <slot name="content"> </slot>
-      <div class="footer">
-        <slot name="actions"></slot>
-        <button @click="close">Close</button>
+      <h1 class="popup__title">Select a currency to add to the comparison list</h1>
+      <div class="popup__content">
+        <slot name="content"> </slot>
       </div>
+
+      <footer class="popup__actions">
+        <slot name="actions"></slot>
+        <button class="btn-common" @click="close">Close</button>
+      </footer>
     </div>
   </div>
 </template>
