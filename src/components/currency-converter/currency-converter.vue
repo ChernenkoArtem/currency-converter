@@ -101,7 +101,7 @@ export default class CurrencyConverter extends Vue {
       </label>
       <ISelect
         :options-list="commonCurrencySeries"
-        default-value="USD"
+        :default-value="converterData.from.currency"
         @selected-value="selectHandler($event, 'from')"
       />
     </div>
@@ -119,7 +119,7 @@ export default class CurrencyConverter extends Vue {
       </label>
       <ISelect
         :options-list="commonCurrencySeries"
-        default-value="BTC"
+        :default-value="converterData.to.currency"
         @selected-value="selectHandler($event, 'to')"
       />
     </div>
