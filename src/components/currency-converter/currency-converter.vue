@@ -25,14 +25,18 @@ export default class CurrencyConverter extends Vue {
   converterData: IConverter = {
     from: {
       value: '',
-      currency: '',
+      currency: 'USD',
     },
     to: {
       value: '',
-      currency: '',
+      currency: 'BTC',
     },
-    exchangeRate: 1,
+    exchangeRate: 0,
   };
+
+  mounted() {
+    this.setCurrencyRateByOne('from');
+  }
 
   selectHandler(value: string, key: string) {
     (this.converterData[key as keyof IConverter] as ConverterData).currency = value;
@@ -48,7 +52,7 @@ export default class CurrencyConverter extends Vue {
   convert(key: string) {
     const [, , , toKey] = this.getconverterDataValue(key);
     const fromValue = (this.converterData[key as keyof IConverter] as ConverterData).value;
-    let toValue = 1;
+    let toValue = 0;
     if (key === 'to') {
       toValue = +fromValue * this.converterData.exchangeRate;
     } else if (key === 'from') {

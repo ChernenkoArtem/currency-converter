@@ -38,9 +38,6 @@ class CurrencyService {
       headers: this.headers,
     };
 
-    // const baseDate = new Date();
-    // const date = baseDate.toISOString().split('T')[0];
-
     return fetch(
       `https://api.apilayer.com/exchangerates_data/latest?symbols=${symbolsSeries}&base=${baseSymbols}`,
       requestOptions,
