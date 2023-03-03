@@ -38,7 +38,7 @@ body {
   text-align: center;
   transition: all 0.2s;
   &:hover {
-    color: #000000;
+    color: #d1cdcd;
     background-color: #2f3640;
     cursor: pointer;
   }

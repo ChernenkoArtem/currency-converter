@@ -81,11 +81,14 @@ export default class CurrenciesCompareList extends Vue {
 <template>
   <div class="compare-wrapper">
     <div class="currencies">
-      <ISelect
-        :options-list="selectCurrenciesList"
-        default-value="USD"
-        @selected-value="selectedHandler"
-      />
+      <div class="currencies__select">
+        <ISelect
+          :options-list="selectCurrenciesList"
+          default-value=""
+          @selected-value="selectedHandler"
+        />
+        <button class="btn-common select-settings" @click="openPopup">&#9881;</button>
+      </div>
 
       <div class="currencies__compare compare">
         <div
@@ -98,7 +101,6 @@ export default class CurrenciesCompareList extends Vue {
         </div>
       </div>
     </div>
-    <button class="btn-common" @click="openPopup">OPEN POPUP</button>
   </div>
 
   <Popup :is-open="isPopupOpen" @close="closePopup">
