@@ -68,7 +68,6 @@ export default class CurrenciesCompareList extends Vue {
   addCurrency() {
     if (!this.selectedSearchValue) return;
     this.compareCurrenciesList.add(this.selectedSearchValue);
-    F;
     this.setCompareListToStorage();
   }
 
