@@ -3,22 +3,16 @@ import { Vue, Options } from 'vue-class-component';
 import currencyService from '@/services/currency';
 import ISelect from '@/components/select/select.vue';
 import { debounce, hetoFixedlpFunc } from '@/utils/utils';
-
-type ConverterData = {
-  value: string | number;
-  currency: string;
-};
-interface IConverter {
-  from: ConverterData;
-  to: ConverterData;
-  exchangeRate: number;
-}
+import { IConverter, ConverterData } from './_data/converter.interface';
+import { ConverterEnum } from './_data/converter.enum';
 
 @Options({
   components: { ISelect },
 })
 export default class CurrencyConverter extends Vue {
   commonCurrencySeries = currencyService.commonSeries;
+
+  converterEnum = ConverterEnum;
 
   onChangeDebounced = debounce(this.onInputChange, 400);
 
@@ -35,7 +29,7 @@ export default class CurrencyConverter extends Vue {
   };
 
   mounted() {
-    this.setCurrencyRateByOne('from');
+    this.setCurrencyRateByOne(this.converterEnum.from);
   }
 
   selectHandler(value: string, key: string) {
@@ -46,6 +40,7 @@ export default class CurrencyConverter extends Vue {
   onInputChange(value: Event, key: string) {
     const target = value.target as HTMLInputElement;
     (this.converterData[key as keyof IConverter] as ConverterData).value = +target.value;
+
     this.convert(key);
   }
 
@@ -53,10 +48,17 @@ export default class CurrencyConverter extends Vue {
     const [, , , toKey] = this.getconverterDataValue(key);
     const fromValue = (this.converterData[key as keyof IConverter] as ConverterData).value;
     let toValue = 0;
-    if (key === 'to') {
-      toValue = +fromValue * this.converterData.exchangeRate;
-    } else if (key === 'from') {
-      toValue = +fromValue / this.converterData.exchangeRate;
+    const rate = this.converterData.exchangeRate;
+    if (key === this.converterEnum.to) {
+      // eslint-disable-next-line no-unused-expressions
+      rate < 1
+        ? (toValue = hetoFixedlpFunc(+fromValue / rate))
+        : (toValue = hetoFixedlpFunc(+fromValue * rate));
+    } else if (key === this.converterEnum.from) {
+      // eslint-disable-next-line no-unused-expressions
+      rate < 1
+        ? (toValue = hetoFixedlpFunc(+fromValue * rate))
+        : (toValue = hetoFixedlpFunc(+fromValue / rate));
     }
 
     if (fromValue || toValue) {
@@ -76,14 +78,11 @@ export default class CurrencyConverter extends Vue {
   setCurrencyRateByOne(key: string) {
     const [from, to] = this.getconverterDataValue(key);
     if (!from || !to) return;
-    currencyService
-      .getCurrencyCompare(from as string, [to as string])
-      .then((res) => res.text())
-      .then((v) => {
-        const value = JSON.parse(v);
-        this.converterData.exchangeRate = +hetoFixedlpFunc(value.rates[to]);
-        this.convert(key);
-      });
+    currencyService.getCurrencyCompare(from as string, [to as string]).then((value) => {
+      this.converterData.exchangeRate = +hetoFixedlpFunc(value.rates[to]);
+
+      this.convert(key);
+    });
   }
 }
 </script>
@@ -95,14 +94,14 @@ export default class CurrencyConverter extends Vue {
         <input
           id="from_input"
           type="text"
-          @input="onChangeDebounced($event, 'from')"
+          @input="onChangeDebounced($event, converterEnum.from)"
           :value="converterData.from.value"
         />
       </label>
       <ISelect
         :options-list="commonCurrencySeries"
         :default-value="converterData.from.currency"
-        @selected-value="selectHandler($event, 'from')"
+        @selected-value="selectHandler($event, converterEnum.from)"
       />
     </div>
 
@@ -113,14 +112,14 @@ export default class CurrencyConverter extends Vue {
         <input
           id="to_input"
           type="text"
-          @input="onChangeDebounced($event, 'to')"
+          @input="onChangeDebounced($event, converterEnum.to)"
           :value="converterData.to.value"
         />
       </label>
       <ISelect
         :options-list="commonCurrencySeries"
         :default-value="converterData.to.currency"
-        @selected-value="selectHandler($event, 'to')"
+        @selected-value="selectHandler($event, converterEnum.to)"
       />
     </div>
   </div>

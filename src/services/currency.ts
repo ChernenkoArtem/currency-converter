@@ -10,16 +10,18 @@ class CurrencyService {
     this.headers.append('apikey', environment.currencyAPIKey);
   }
 
-  getSymbols(): Promise<Response> {
+  getSymbols(): Promise<any> {
     const requestOptions: RequestInit = {
       method: 'GET',
       redirect: 'follow',
       headers: this.headers,
     };
-    return fetch('https://api.apilayer.com/exchangerates_data/symbols', requestOptions);
+    return fetch('https://api.apilayer.com/exchangerates_data/symbols', requestOptions).then(
+      (res) => Promise.resolve(this.parseResponse(res)),
+    );
   }
 
-  getConvert(from: string, to: string, amount: string | number): Promise<Response> {
+  getConvert(from: string, to: string, amount: string | number): Promise<any> {
     const requestOptions: RequestInit = {
       method: 'GET',
       redirect: 'follow',
@@ -28,10 +30,10 @@ class CurrencyService {
     return fetch(
       `https://api.apilayer.com/exchangerates_data/convert?to=${to}&from=${from}&amount=${amount}`,
       requestOptions,
-    );
+    ).then((res) => Promise.resolve(this.parseResponse(res)));
   }
 
-  getCurrencyCompare(baseSymbols: string, symbolsSeries: string[]): Promise<Response> {
+  getCurrencyCompare(baseSymbols: string, symbolsSeries: string[]): Promise<any> {
     const requestOptions: RequestInit = {
       method: 'GET',
       redirect: 'follow',
@@ -41,7 +43,11 @@ class CurrencyService {
     return fetch(
       `https://api.apilayer.com/exchangerates_data/latest?symbols=${symbolsSeries}&base=${baseSymbols}`,
       requestOptions,
-    );
+    ).then((res) => Promise.resolve(this.parseResponse(res)));
+  }
+
+  private async parseResponse(res: Response) {
+    return JSON.parse(await res.text());
   }
 }
 

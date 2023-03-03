@@ -13,5 +13,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'max-len': ['error', { code: 120 }],
     'implicit-arrow-linebreak': ['error', 'beside'],
+    'import/prefer-default-export': 'off',
   },
 };

@@ -4,7 +4,6 @@ import currencyService from '@/services/currency';
 import ISelect from '@/components/select/select.vue';
 import Popup from '@/components/popup/popup.vue';
 import Storage from '@/services/storage';
-import { Watch } from 'vue-property-decorator';
 
 @Options({
   components: { ISelect, Popup },
@@ -18,7 +17,7 @@ export default class CurrenciesCompareList extends Vue {
 
   readonly selectCurrenciesList = ['USD', 'EUR', 'UAH'];
 
-  compareCurrenciesList = ['USD', 'EUR', 'UAH', 'BTC'];
+  compareCurrenciesList = new Set(['USD', 'EUR', 'UAH', 'BTC']);
 
   compareCurrenciesRates: Array<Array<string>> = [];
 
@@ -29,9 +28,9 @@ export default class CurrenciesCompareList extends Vue {
 
     try {
       const carrenciesList = Storage.getItem(key);
-      this.compareCurrenciesList = carrenciesList;
+      this.compareCurrenciesList = new Set(carrenciesList);
     } catch (e) {
-      Storage.setItem(key, this.compareCurrenciesList);
+      Storage.setItem(key, [...this.compareCurrenciesList]);
     }
   }
 
@@ -43,24 +42,17 @@ export default class CurrenciesCompareList extends Vue {
 
   compareCurrencies() {
     currencyService
-      .getCurrencyCompare(this.baseCurrencySelected, this.compareCurrenciesList)
-      .then((res) => res.text())
-      .then((v) => {
-        const value = JSON.parse(v);
+      .getCurrencyCompare(this.baseCurrencySelected, [...this.compareCurrenciesList])
+      .then((value) => {
         this.compareCurrenciesRates = Object.entries(value.rates);
       });
   }
 
   openPopup() {
     if (this.fullyCurrenciesSymbolsList.length < 1) {
-      currencyService
-        .getSymbols()
-        .then((res) => res.text())
-        .then((v) => {
-          const value = JSON.parse(v);
-
-          this.fullyCurrenciesSymbolsList = Object.keys(value.symbols);
-        });
+      currencyService.getSymbols().then((value) => {
+        this.fullyCurrenciesSymbolsList = Object.keys(value.symbols);
+      });
     }
     this.isPopupOpen = true;
   }
@@ -75,16 +67,14 @@ export default class CurrenciesCompareList extends Vue {
 
   addCurrency() {
     if (!this.selectedSearchValue) return;
-
-    this.compareCurrenciesList = [...this.compareCurrenciesList, this.selectedSearchValue];
+    this.compareCurrenciesList.add(this.selectedSearchValue);
+    F;
+    this.setCompareListToStorage();
   }
 
-  @Watch('compareCurrenciesList')
   setCompareListToStorage() {
-    console.log('Watch work');
-
     const key = Storage.currenciesKey;
-    Storage.setItem(key, this.compareCurrenciesList);
+    Storage.setItem(key, [...this.compareCurrenciesList]);
   }
 }
 </script>
@@ -100,8 +90,8 @@ export default class CurrenciesCompareList extends Vue {
 
       <div class="currencies__compare compare">
         <div
-          v-for="[name, value] in compareCurrenciesRates"
-          v-bind:key="name"
+          v-for="([name, value], i) in compareCurrenciesRates"
+          v-bind:key="i"
           class="compare__item item"
         >
           <div class="item__name">{{ name }}</div>
